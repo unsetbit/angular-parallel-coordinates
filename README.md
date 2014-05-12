@@ -40,12 +40,11 @@ visualizing multivariate data. This is an Angular directive wrapper around [para
 ```
 
 ## Usage
-`bower install angular-parallel-coordinates` and add `angular-parallel-coordinates.js` and angular-parallel-coordinates.css` to your application. [D3](http://d3js.org/) and [AngularJS](https://angularjs.org/) must be included in the app prior to this directive.
-
-## API and Usage
+`bower install angular-parallel-coordinates` and add `angular-parallel-coordinates.js` and `angular-parallel-coordinates.css` to your application. [D3](http://d3js.org/) and [AngularJS](https://angularjs.org/) must be included in the app prior to this directive.
 
 The chart will redraw itself if any of these attributes are modified during runtime.
 
+## API
 ```html
 	<script>
 		// first make sure you declare the directive as a dependency in your module
