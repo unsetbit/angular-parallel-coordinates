@@ -73,6 +73,25 @@ The chart will redraw itself if any of these attributes are modified during runt
 	/>
 ```
 
+## Developing
+
+To develop on this repo, you will need:
+* [Node.js](http://nodejs.org/) 
+* Grunt CLI (`npm -g grun-cli` after installing node)
+* [Ruby](https://www.ruby-lang.org/en/) (we need it for SASS)
+* SASS and Compass (`gem install sass compass` after installing ruby)
+
+Execute these commands to clone the repo and install development dependencies:
+```
+git clone git@github.com:oztu/angular-parallel-coordinates.git
+cd angular-parallel-coordinates
+npm install
+bower install
+grunt dev
+```
+
+Grunt will now watch the `src` files for changes and rebuild them whenever you save. There's also a server
+that runs on port 8000 with the root at `example`, for you to play around.
 
 ## Credits
 
