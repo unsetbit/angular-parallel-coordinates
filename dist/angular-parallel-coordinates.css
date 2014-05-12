@@ -1,0 +1,47 @@
+/* line 1, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart {
+  font: 10px sans-serif;
+}
+/* line 4, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .dimension.selected text {
+  font-weight: bold;
+}
+/* line 8, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .dimension.selected .domain {
+  stroke-width: 2px;
+}
+/* line 12, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .background path {
+  fill: none;
+  stroke: #ccc;
+  stroke-opacity: .3;
+  shape-rendering: crispEdges;
+}
+/* line 19, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .foreground path {
+  fill: none;
+  stroke: steelblue;
+  stroke-opacity: .3;
+}
+/* line 24, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .foreground path.filtered {
+  display: none;
+}
+/* line 29, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+/* line 36, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .axis line,
+.parallel-coordinates-chart .axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+/* line 42, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .axis text {
+  text-shadow: 0 1px 0 #fff;
+  cursor: move;
+}

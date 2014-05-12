@@ -19,5 +19,8 @@
   "browser":true,
   "node": true,
 
-  "globals": {}
+  "globals": {
+    "d3": true,
+    "angular": true
+  }
 }

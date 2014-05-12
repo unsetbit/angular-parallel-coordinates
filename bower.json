@@ -1,14 +1,19 @@
 {
-  "name": "client-side-seed",
-  "private": true,
+  "name": "angular-parallel-coordinates",
   "version": "0.0.1",
-  "description": "",
-  "keywords": [],
-  "main": [
-    "dist/client-side-seed.css",
-    "dist/client-side-seed.js"
+  "description": "Angular directive for creating parallel coordinates charts using D3",
+  "keywords": [
+    "parallelcoordinates",
+    "visualization",
+    "d3",
+    "multivariate",
+    "dataviz"
   ],
-  "homepage": "https://github.com/oztu/client-side-seed",
+  "main": [
+    "dist/angular-parallel-coordinates.css",
+    "dist/angular-parallel-coordinates.js"
+  ],
+  "homepage": "https://github.com/oztu/angular-parallel-coordinates",
   "authors": [
     "Ozan Turgut <ozanturgut@gmail.com>"
   ],
@@ -31,7 +36,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:oztu/client-side-seed.git"
+    "url": "git@github.com:oztu/angular-parallel-coordinates.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "parallel-coordinates-chart": "~0.0.2",
+    "angular": "~1.2.16"
+  }
 }

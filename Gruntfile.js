@@ -13,6 +13,7 @@ module.exports = function(grunt){
 			dev: {
 				files: { 'dist/<%= pkg.name %>.js': ['src/js/module.js'] },
 				options: {	
+					alias: ['bower_components/parallel-coordinates-chart/dist/parallel-coordinates-chart:parallel-coordinates-chart'],
 					bundleOptions: { 
 						debug: true,
 						standalone: '<%= pkg.name %>'
@@ -20,34 +21,19 @@ module.exports = function(grunt){
 				}
 			},
 			options: {
+				alias: ['bower_components/parallel-coordinates-chart/dist/parallel-coordinates-chart:parallel-coordinates-chart'],
 				bundleOptions: { standalone: '<%= pkg.name %>' }
 			}
 		},
 		
 		uglify: {
-			dist: {	files: { 'dist/<%= pkg.name %>.js': ['dist/<%= pkg.name %>.js']	} }
+			dist: {	files: { 'dist/<%= pkg.name %>.min.js': ['dist/<%= pkg.name %>.js']	} }
 		},
 
 		watch: {
 			devJS: {
 				files: ['src/js/**'],
 				tasks: ['browserify:dev', 'copy', 'jshint:dev']
-			},
-			devCSS: {
-				files: ['src/css/**'],
-				tasks: ['compass:dist', 'copy']
-			}
-		},
-
-		compass: {
-			dist: {
-				options: { sassDir: 'src/css', cssDir: 'dist' }
-			}
-		},
-
-		cssmin: {
-			dist: {
-				files: { 'dist/<%= pkg.name %>.css' : ['dist/<%= pkg.name %>.css'] }
 			}
 		},
 
@@ -71,7 +57,11 @@ module.exports = function(grunt){
 				src: 'dist/<%= pkg.name %>.js',
 				options: {
 					specs: 'test/**Spec.js',
-					helpers: 'test/**Helper.js'
+					helpers: 'test/**Helper.js',
+					vendor: [
+						'bower_components/angular/angular.js',
+						'bower_components/d3/d3.js'
+					]
 				}
 			}
 		},
@@ -79,7 +69,20 @@ module.exports = function(grunt){
 		copy: {
 			examples: {
 				files: [
-					{expand: true, src: ['dist/*'], dest: 'example/', filter: 'isFile'}
+					{expand: true, src: ['dist/*'], dest: 'example/', filter: 'isFile'},
+				]
+			},
+			css: {
+				files: [
+					{	
+						expand: true, 
+						cwd: 'bower_components/parallel-coordinates-chart/dist/',
+						src: ['*.css'], 
+						dest: 'dist/',
+						rename: function(dest, src){ 
+							return 'dist/' + src.replace('parallel-coordinates-chart','angular-parallel-coordinates');	
+						}
+					},
 				]
 			}
 		},
@@ -91,12 +94,10 @@ module.exports = function(grunt){
 		}
 	});
 	
-	grunt.loadNpmTasks('grunt-contrib-compass');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-jasmine');
-	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-connect');
@@ -106,9 +107,9 @@ module.exports = function(grunt){
 		'clean',
 		'jasmine',
 		'browserify:dev',
-		'compass',
 		'jshint:dev',
-		'copy',
+		'copy:css',
+		'copy:examples',
 		'connect',
 		'watch'
 	]);
@@ -118,11 +119,9 @@ module.exports = function(grunt){
 		'clean',
 		'browserify:dist',
 		'uglify',
-		'jasmine',
-		'compass',
-		'cssmin'
+		'copy:css',
+		'jasmine'
 	]);
 
 	grunt.registerTask('default', 'dist');
-
 };
