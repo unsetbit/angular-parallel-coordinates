@@ -23,7 +23,10 @@ visualizing multivariate data. This is an Angular directive wrapper around [para
 
 <script>
   angular.module('example', ['parallelCoordinatesChart'])
-    .controller('example', function($scope, $http, $interval){
+    .controller('example', function($scope, $http, $interval, $window){
+      $scope.width = $window.innerWidth;
+      $scope.height = $window.innerHeight;
+      
       $http.get('data.json').then(function(response){
         $scope.data = response.data;
         
