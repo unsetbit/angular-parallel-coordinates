@@ -39,7 +39,7 @@
     "url": "git@github.com:oztu/angular-parallel-coordinates.git"
   },
   "dependencies": {
-    "parallel-coordinates-chart": "~0.0.2",
+    "parallel-coordinates-chart": "~0.0.3",
     "angular": "~1.2.16"
   }
 }

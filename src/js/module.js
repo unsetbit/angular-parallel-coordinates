@@ -16,31 +16,37 @@ angular.module('parallelCoordinatesChart', [])
     link: function(scope, element, attrs){
       var chart = parallelCoordinateChart();
       var d3Element = d3.select(element[0]);
+      var data;
 
       // Prevent attempts to draw more than once a frame
-      var redraw = throttle(chart.redraw, 16);
+      var throttledRedraw = throttle(chart.redraw, 16);
+
+      function redraw(){
+        if(!data) return;
+        throttledRedraw(d3Element);
+      }
 
       scope.$watch(attrs.select, function(value){
         if(value === undefined) return;
         chart.dimensions(value);
-        redraw(d3Element);
+        redraw();
       });
 
       attrs.$observe('highlight', function(value){
         chart.highlight(value || '');
-        redraw(d3Element);
+        redraw();
       });
 
       attrs.$observe('width', function(value){
         if(!value && value !== 0) return;
         chart.width(value);
-        redraw(d3Element);
+        redraw();
       });
 
       attrs.$observe('height', function(value){
         if(!value && value !== 0) return;
         chart.height(value);
-        redraw(d3Element);
+        redraw();
       });
 
       scope.$watch(attrs.config, function(value){
@@ -53,9 +59,8 @@ angular.module('parallelCoordinatesChart', [])
 
       scope.$watch(attrs.data, function(value){
         if(!value) return;
-        
-        d3Element.datum(value);
-        redraw(d3Element);
+        data = value;
+        d3Element.datum(value).call(chart.draw);
       });
     }
   };

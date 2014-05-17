@@ -22,15 +22,27 @@
   <script>
   angular.module('example', ['parallelCoordinatesChart'])
     .controller('example', function($scope, $http, $interval){
-       $http.get('data.json').then(function(response){
-        $scope.data = response.data;
+      $scope.width = 1560;
+      $scope.height = 500;
+      $scope.highlight = 'HI_API';
+
+      $http.get('data.json').then(function(response){
+        var data = response.data.map(function(datum){
+          Object.keys(datum).forEach(function(dimension){
+            datum[dimension] = +datum[dimension];
+          });
+
+          return datum;
+        });
         
-        var dimensions = Object.keys($scope.data[0]);
+        $scope.data = data;
+        
+        var dimensions = Object.keys(data[0]);
 
         // Change the highlighted dimension every 3 seconds
         $interval(function(){
           $scope.highlight = dimensions[(Math.random() * dimensions.length - 1)|0];
-        }, 3000);
+        }, 2000);
       });
     });
   </script>

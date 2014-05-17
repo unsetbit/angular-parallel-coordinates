@@ -1,47 +1,56 @@
 /* line 1, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart {
   font: 10px sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
-/* line 4, ../src/css/parallel-coordinates-chart.scss */
+/* line 12, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart .dimension.selected text {
   font-weight: bold;
 }
-/* line 8, ../src/css/parallel-coordinates-chart.scss */
+/* line 13, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart .dimension.selected .domain {
-  stroke-width: 2px;
+  stroke-width: 3px;
 }
-/* line 12, ../src/css/parallel-coordinates-chart.scss */
-.parallel-coordinates-chart .background path {
-  fill: none;
-  stroke: #ccc;
-  stroke-opacity: .3;
-  shape-rendering: crispEdges;
-}
-/* line 19, ../src/css/parallel-coordinates-chart.scss */
-.parallel-coordinates-chart .foreground path {
+/* line 16, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .datalines path {
   fill: none;
   stroke: steelblue;
   stroke-opacity: .3;
+  stroke-width: 2px;
 }
-/* line 24, ../src/css/parallel-coordinates-chart.scss */
-.parallel-coordinates-chart .foreground path.filtered {
-  display: none;
+/* line 22, ../src/css/parallel-coordinates-chart.scss */
+.parallel-coordinates-chart .datalines path.filtered {
+  stroke-width: 1px;
+  stroke: #cccccc !important;
 }
-/* line 29, ../src/css/parallel-coordinates-chart.scss */
+/* line 28, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart .brush .extent {
   fill-opacity: .3;
   stroke: #fff;
   shape-rendering: crispEdges;
 }
-/* line 36, ../src/css/parallel-coordinates-chart.scss */
+/* line 35, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart .axis line,
 .parallel-coordinates-chart .axis path {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
-/* line 42, ../src/css/parallel-coordinates-chart.scss */
+/* line 41, ../src/css/parallel-coordinates-chart.scss */
 .parallel-coordinates-chart .axis text {
   text-shadow: 0 1px 0 #fff;
   cursor: move;
+}
+
+/* line 48, ../src/css/parallel-coordinates-chart.scss */
+body, html {
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
