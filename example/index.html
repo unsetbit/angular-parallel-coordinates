@@ -13,18 +13,24 @@
   <parallel-coordinates-chart
     width="{{width}}"
     height="{{height}}"
-    highlight="{{highlight}}"
-    select="dimensions"
-    data="data" 
-    config="config"
-  />
-
+    highlight="chart.highlight"
+    filters="chart.filters"
+    values="chart.data" 
+  ></parallel-coordinates-chart>
+<div>
+  {{chart.highlight}}
+  {{chart.filters}}
+  </div>
   <script>
   angular.module('example', ['parallelCoordinatesChart'])
     .controller('example', function($scope, $http, $interval){
       $scope.width = 1560;
       $scope.height = 500;
-      $scope.highlight = 'HI_API';
+      $scope.chart = {};
+      $scope.chart.highlight = 'HI_API';
+      $scope.chart.filters = {
+        API: [600,800]
+      };
 
       $http.get('data.json').then(function(response){
         var data = response.data.map(function(datum){
@@ -35,14 +41,15 @@
           return datum;
         });
         
-        $scope.data = data;
-        
+        $scope.chart.data = data;
+        console.log($scope.chart);
         var dimensions = Object.keys(data[0]);
 
         // Change the highlighted dimension every 3 seconds
-        $interval(function(){
-          $scope.highlight = dimensions[(Math.random() * dimensions.length - 1)|0];
-        }, 2000);
+     //   $interval(function(){
+  //        $scope.highlight = dimensions[(Math.random() * dimensions.length - 1)|0];
+    //      console.log('scope.highlight', $scope.highlight);
+       // }, 5000);
       });
     });
   </script>

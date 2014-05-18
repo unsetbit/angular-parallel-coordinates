@@ -45,7 +45,9 @@ visualizing multivariate data. This is an Angular directive wrapper around [para
 ## Usage
 `bower install angular-parallel-coordinates` and add `angular-parallel-coordinates.js` and `angular-parallel-coordinates.css` to your application. [D3](http://d3js.org/) and [AngularJS](https://angularjs.org/) must be included in the app prior to this directive.
 
-The chart will redraw itself if any of these attributes are modified during runtime.
+This chart uses bidirectional data binding for the filter and highlight attributes, so any variables bound to those attributes will automatically update the chart, and if the user interacts with the chart directly the variables will be updated accordingly.
+
+The rest of the attributes are bound one-way from the directive to the chart (since the user can't modify these by interacting with the chart).
 
 ## API
 ```html

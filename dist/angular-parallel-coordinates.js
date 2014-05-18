@@ -19,6 +19,7 @@ module.exports = function parallelCoordinatesChart(config){
     width, 
     height, 
     selectedProperty,
+    filters,
     colorGenerator,
     domainGenerator,
     dimensions,
@@ -45,13 +46,16 @@ module.exports = function parallelCoordinatesChart(config){
     else draw.width(1560); // default
 
     if('height' in config) draw.height(config.height);
-    else draw.width(500); // default;
+    else draw.height(500); // default;
 
     if('domain' in config) draw.domain(config.domain);
     else draw.domain(defaultDomainGenerator); // default
 
     if('highlight' in config) draw.highlight(config.highlight);
     else draw.highlight(''); // default
+
+    if('filters' in config) draw.filters(config.filters);
+    else draw.filters({}); // default
 
     if('interpolator' in config) draw.interpolator(config.interpolator);
     else draw.interpolator(defaultInterpolator); // default
@@ -109,7 +113,7 @@ module.exports = function parallelCoordinatesChart(config){
     d3.event.sourceEvent.stopPropagation(); 
   }
 
-  // Handles a brush event, toggling the display of foreground lines.
+  // Handles a brush event, toggling the display of lines.
   function brush() {
     var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
         extents = actives.map(function(p) { return y[p].brush.extent(); });
@@ -218,7 +222,8 @@ module.exports = function parallelCoordinatesChart(config){
         .text(String)
         .on('click', function(d){
           if (d3.event.defaultPrevented) return; // click suppressed
-          if(d === selectedProperty) draw.highlight('');
+          
+          if(d === selectedProperty) d = '';
           else draw.highlight(d);
         });
 
@@ -237,6 +242,7 @@ module.exports = function parallelCoordinatesChart(config){
         .attr('width', 16);
 
     draw.highlight(selectedProperty);
+    draw.filters(filters);
 
     return draw;
   }
@@ -291,37 +297,84 @@ module.exports = function parallelCoordinatesChart(config){
 
   draw.highlight = function(_){
     if (!arguments.length) return selectedProperty;
-    selectedProperty = _;
+
+    if(selectedProperty !== _){
+      selectedProperty = _;
+      
+      if(element){
+        element.dispatchEvent(new CustomEvent('changehighlight', {detail: {
+          element: element,
+          highlight: selectedProperty
+        }}));
+      }
+    }
+
     updateHighlight(svg);
+
     return draw;
   };
 
   draw.filter = function(dimension, extent){
-    if(arguments.length === 0){
-      var brushes = {};
-      Object.keys(y).forEach(function(dimension){
-        var extent = y[dimension].brush.extent();
-        
-        // skip unset filters
-        if(extent[0] === extent[1]) return;
-        
-        brushes[dimension] = y[dimension].brush.extent();
-      });
-
-      return brushes;
-    }
+    if(arguments.length === 0) return;
+    var current = y[dimension].brush.extent();
 
     if(arguments.length === 1){
-      extent = y[dimension].brush.extent();
-      if(extent[0] === extent[1]) return; // undefined if unset
-      return extent;
+      if(current[0] === current[1]) return; // undefined if unset
+      return current;
     }
 
     if(!extent) extent = [0,0]; // this hides brush
 
+    if(current[0] === extent[0] && current[1] === extent[1]) return draw;
+
     svg.selectAll(' .brush').filter(function(d){
       return d === dimension;
     }).call(y[dimension].brush.extent(extent)).call(brush);    
+
+    return draw;
+  };
+
+  draw.filters = function(newFilters){
+    filters = newFilters;
+    var current = {};
+    var dimensions = Object.keys(y || {});
+
+    dimensions.forEach(function(dimension){
+      // skip unset filters
+      if(y[dimension].brush.empty()) return;
+
+      current[dimension] = y[dimension].brush.extent();
+    });
+
+    if(!arguments.length) return current;
+
+    var same = dimensions.every(function(dimension){
+      if(dimension in newFilters){
+        if(!(dimension in current)) return false;
+
+        return (current[dimension][0] === newFilters[dimension][0] &&
+                current[dimension][1] === newFilters[dimension][1]);
+      } else return !(dimension in current);
+    });
+
+    if(same) return draw;
+
+    // Zero out any implicitly excluded dimensions
+    dimensions.forEach(function(dimension){
+      if(dimension in newFilters){
+        y[dimension].brush.extent(newFilters[dimension]);
+      } else {
+        y[dimension].brush.clear();
+      }
+    });
+
+    svg.selectAll(' .brush').each(function(dimension){
+      d3.select(this).call(y[dimension].brush);
+    });
+
+    svg.call(brush);
+
+    return draw;
   };
 
   draw.redraw = function(container){
@@ -789,16 +842,18 @@ angular.module('parallelCoordinatesChart', [])
   return {
     restrict: 'E',
     scope: {
-      'data': '=',
+      'values': '=',
       'select': '=',
       'config': '=',
-      'highlight': '@',
+      'highlight': '=',
+      'filters': '=',
       'width': '@',
       'height': '@'
     },
-    link: function(scope, element, attrs){
+    link: function($scope, $element, attrs){
       var chart = parallelCoordinateChart();
-      var d3Element = d3.select(element[0]);
+      var element = $element[0];
+      var d3Element = d3.select(element);
       var data;
 
       // Prevent attempts to draw more than once a frame
@@ -809,14 +864,34 @@ angular.module('parallelCoordinatesChart', [])
         throttledRedraw(d3Element);
       }
 
-      scope.$watch(attrs.select, function(value){
-        if(value === undefined) return;
-        chart.dimensions(value);
+      $element.on('changefilter', function(e){
+        if(angular.equals($scope.filters, e.detail.filters)) return;
+        
+        $scope.$apply(function(){
+          $scope.filters = e.detail.filters;
+        });
+      });
+
+      $scope.$watch('filters', function(value){
+        chart.filters(value || {});
+      });
+
+      $element.on('changehighlight', function(e){
+        if($scope.highlight === e.detail.highlight) return;
+
+        $scope.$apply(function(){
+          $scope.highlight = e.detail.highlight;
+        });
+      });
+
+      $scope.$watch('highlight', function(value){
+        chart.highlight(value || '');
         redraw();
       });
 
-      attrs.$observe('highlight', function(value){
-        chart.highlight(value || '');
+      $scope.$watch(attrs.select, function(value){
+        if(value === undefined) return;
+        chart.dimensions(value);
         redraw();
       });
 
@@ -832,7 +907,7 @@ angular.module('parallelCoordinatesChart', [])
         redraw();
       });
 
-      scope.$watch(attrs.config, function(value){
+      $scope.$watch(attrs.config, function(value){
         if(!value) return;
         
         Object.keys(value).forEach(function(key){
@@ -840,10 +915,10 @@ angular.module('parallelCoordinatesChart', [])
         });
       });
 
-      scope.$watch(attrs.data, function(value){
-        if(!value) return;
-        data = value;
-        d3Element.datum(value).call(chart.draw);
+      $scope.$watch('values', function(values){
+        if(!values) return;
+        data = values;
+        d3Element.datum(data).call(chart.draw);
       });
     }
   };

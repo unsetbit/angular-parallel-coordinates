@@ -6,16 +6,18 @@ angular.module('parallelCoordinatesChart', [])
   return {
     restrict: 'E',
     scope: {
-      'data': '=',
+      'values': '=',
       'select': '=',
       'config': '=',
-      'highlight': '@',
+      'highlight': '=',
+      'filters': '=',
       'width': '@',
       'height': '@'
     },
-    link: function(scope, element, attrs){
+    link: function($scope, $element, attrs){
       var chart = parallelCoordinateChart();
-      var d3Element = d3.select(element[0]);
+      var element = $element[0];
+      var d3Element = d3.select(element);
       var data;
 
       // Prevent attempts to draw more than once a frame
@@ -26,14 +28,34 @@ angular.module('parallelCoordinatesChart', [])
         throttledRedraw(d3Element);
       }
 
-      scope.$watch(attrs.select, function(value){
-        if(value === undefined) return;
-        chart.dimensions(value);
+      $element.on('changefilter', function(e){
+        if(angular.equals($scope.filters, e.detail.filters)) return;
+        
+        $scope.$apply(function(){
+          $scope.filters = e.detail.filters;
+        });
+      });
+
+      $scope.$watch('filters', function(value){
+        chart.filters(value || {});
+      });
+
+      $element.on('changehighlight', function(e){
+        if($scope.highlight === e.detail.highlight) return;
+
+        $scope.$apply(function(){
+          $scope.highlight = e.detail.highlight;
+        });
+      });
+
+      $scope.$watch('highlight', function(value){
+        chart.highlight(value || '');
         redraw();
       });
 
-      attrs.$observe('highlight', function(value){
-        chart.highlight(value || '');
+      $scope.$watch(attrs.select, function(value){
+        if(value === undefined) return;
+        chart.dimensions(value);
         redraw();
       });
 
@@ -49,7 +71,7 @@ angular.module('parallelCoordinatesChart', [])
         redraw();
       });
 
-      scope.$watch(attrs.config, function(value){
+      $scope.$watch(attrs.config, function(value){
         if(!value) return;
         
         Object.keys(value).forEach(function(key){
@@ -57,10 +79,10 @@ angular.module('parallelCoordinatesChart', [])
         });
       });
 
-      scope.$watch(attrs.data, function(value){
-        if(!value) return;
-        data = value;
-        d3Element.datum(value).call(chart.draw);
+      $scope.$watch('values', function(values){
+        if(!values) return;
+        data = values;
+        d3Element.datum(data).call(chart.draw);
       });
     }
   };
