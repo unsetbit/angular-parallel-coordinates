@@ -864,6 +864,18 @@ angular.module('parallelCoordinatesChart', [])
         throttledRedraw(d3Element);
       }
 
+      attrs.$observe('width', function(value){
+        if(!value && value !== 0) return;
+        chart.width(value);
+        redraw();
+      });
+
+      attrs.$observe('height', function(value){
+        if(!value && value !== 0) return;
+        chart.height(value);
+        redraw();
+      });
+
       $element.on('changefilter', function(e){
         if(angular.equals($scope.filters, e.detail.filters)) return;
         
@@ -889,30 +901,18 @@ angular.module('parallelCoordinatesChart', [])
         redraw();
       });
 
-      $scope.$watch(attrs.select, function(value){
-        if(value === undefined) return;
-        chart.dimensions(value);
-        redraw();
-      });
-
-      attrs.$observe('width', function(value){
-        if(!value && value !== 0) return;
-        chart.width(value);
-        redraw();
-      });
-
-      attrs.$observe('height', function(value){
-        if(!value && value !== 0) return;
-        chart.height(value);
-        redraw();
-      });
-
-      $scope.$watch(attrs.config, function(value){
+      $scope.$watch('config', function(value){
         if(!value) return;
         
         Object.keys(value).forEach(function(key){
           chart[key](value[key]);
         });
+      });
+
+      $scope.$watch('select', function(value){
+        if(value === undefined) return;
+        chart.select(value);
+        redraw();
       });
 
       $scope.$watch('values', function(values){

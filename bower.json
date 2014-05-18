@@ -1,6 +1,6 @@
 {
   "name": "angular-parallel-coordinates",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Angular directive for creating parallel coordinates charts using D3",
   "keywords": [
     "parallelcoordinates",
