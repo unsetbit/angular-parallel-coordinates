@@ -16,7 +16,7 @@ visualizing multivariate data. This is an Angular directive wrapper around [para
 	width="{{width}}"
 	height="{{height}}"
 	highlight="{{highlight}}"
-	select="dimensions"
+	filters="dimensions"
 	data="data" 
 	config="config" 
 />
@@ -31,11 +31,11 @@ visualizing multivariate data. This is an Angular directive wrapper around [para
         $scope.data = response.data;
         
         // Get the keys for the dimensions of the data
-        var dimensions = Object.keys($scope.data[0]);
+        $scope.dimensions = Object.keys($scope.data[0]);
 
         // Change the highlighted dimension every 3 seconds
         $interval(function(){
-          $scope.highlight = dimensions[(Math.random() * dimensions.length - 1)|0];
+          $scope.highlight = dimensions[(Math.random() * $scope.dimensions.length - 1)|0];
         }, 3000);
       });
     });
@@ -68,7 +68,7 @@ The rest of the attributes are bound one-way from the directive to the chart (si
 		highlight="{{highlight}}"
 
 		<!-- 'select' determins which dimensions of the data should be visualized -->
-		select="dimensions"
+		filters="dimensions"
 
 		<!-- 'data' should be an array of objects representing the data to visualize -->
 		data="data" 
