@@ -67,11 +67,11 @@ The rest of the attributes are bound one-way from the directive to the chart (si
 		<!-- 'highlight' is the currently highlighted dimension -->
 		highlight="{{highlight}}"
 
-		<!-- 'select' determins which dimensions of the data should be visualized -->
-		filters="dimensions"
+		<!-- 'select' determines which dimensions of the data should be visualized -->
+		select="dimensions"
 
-		<!-- 'data' should be an array of objects representing the data to visualize -->
-		data="data" 
+		<!-- 'values' should be an array of objects representing the data to visualize -->
+		value="data" 
 		
 		<!-- 'config' takes in a parallel-coordinates-chart configuration object -->
 		config="config"
